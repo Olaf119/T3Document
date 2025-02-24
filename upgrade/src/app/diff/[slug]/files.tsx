@@ -69,7 +69,7 @@ function FileComponent({
         language: "typescript",
         refractor,
       });
-    } catch (e) {
+    } catch {
       return undefined;
     }
   }, [hunks]);
@@ -91,19 +91,19 @@ function FileComponent({
             {type === "modify"
               ? "CHANGED"
               : type === "add"
-              ? "ADDED"
-              : type === "delete"
-              ? "DELETED"
-              : "UNKNOWN"}
+                ? "ADDED"
+                : type === "delete"
+                  ? "DELETED"
+                  : "UNKNOWN"}
           </div>
           <h1>
             {oldPath === "/dev/null"
               ? newPath
               : newPath === "/dev/null"
-              ? oldPath
-              : oldPath === newPath
-              ? newPath
-              : oldPath + " → " + newPath}
+                ? oldPath
+                : oldPath === newPath
+                  ? newPath
+                  : oldPath + " → " + newPath}
           </h1>
         </div>
 

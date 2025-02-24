@@ -17,7 +17,6 @@ export const trpcInstaller: Installer = ({
       "superjson",
       "@trpc/server",
       "@trpc/client",
-      "@trpc/next",
       "@trpc/react-query",
     ],
     devMode: false,
@@ -41,10 +40,10 @@ export const trpcInstaller: Installer = ({
     usingAuth && usingDb
       ? "with-auth-db.ts"
       : usingAuth
-      ? "with-auth.ts"
-      : usingDb
-      ? "with-db.ts"
-      : "base.ts";
+        ? "with-auth.ts"
+        : usingDb
+          ? "with-db.ts"
+          : "base.ts";
   const trpcSrc = path.join(
     extrasDir,
     "src/server/api",
@@ -60,14 +59,14 @@ export const trpcInstaller: Installer = ({
     usingAuth && usingPrisma
       ? "with-auth-prisma.ts"
       : usingAuth && usingDrizzle
-      ? "with-auth-drizzle.ts"
-      : usingAuth
-      ? "with-auth.ts"
-      : usingPrisma
-      ? "with-prisma.ts"
-      : usingDrizzle
-      ? "with-drizzle.ts"
-      : "base.ts";
+        ? "with-auth-drizzle.ts"
+        : usingAuth
+          ? "with-auth.ts"
+          : usingPrisma
+            ? "with-prisma.ts"
+            : usingDrizzle
+              ? "with-drizzle.ts"
+              : "base.ts";
 
   const exampleRouterSrc = path.join(
     extrasDir,
@@ -87,6 +86,12 @@ export const trpcInstaller: Installer = ({
   ];
 
   if (appRouter) {
+    addPackageDependency({
+      dependencies: ["server-only"],
+      devMode: false,
+      projectDir,
+    });
+
     const trpcDir = path.join(extrasDir, "src/trpc");
     copySrcDest.push(
       [
@@ -98,19 +103,25 @@ export const trpcInstaller: Installer = ({
         path.join(projectDir, "src/trpc/react.tsx"),
       ],
       [
-        path.join(trpcDir, "shared.ts"),
-        path.join(projectDir, "src/trpc/shared.ts"),
-      ],
-      [
         path.join(
           extrasDir,
           "src/app/_components",
-          packages?.tailwind.inUse ? "create-post-tw.tsx" : "create-post.tsx"
+          packages?.tailwind.inUse ? "post-tw.tsx" : "post.tsx"
         ),
-        path.join(projectDir, "src/app/_components/create-post.tsx"),
+        path.join(projectDir, "src/app/_components/post.tsx"),
+      ],
+      [
+        path.join(extrasDir, "src/trpc/query-client.ts"),
+        path.join(projectDir, "src/trpc/query-client.ts"),
       ]
     );
   } else {
+    addPackageDependency({
+      dependencies: ["@trpc/next"],
+      devMode: false,
+      projectDir,
+    });
+
     const utilsSrc = path.join(extrasDir, "src/utils/api.ts");
     const utilsDest = path.join(projectDir, "src/utils/api.ts");
     copySrcDest.push([utilsSrc, utilsDest]);

@@ -31,15 +31,18 @@ const main = async () => {
   const npmVersion = await getNpmVersion();
   const pkgManager = getUserPkgManager();
   renderTitle();
-  npmVersion && renderVersionWarning(npmVersion);
+  if (npmVersion) {
+    renderVersionWarning(npmVersion);
+  }
 
   const {
     appName,
     packages,
     flags: { noGit, noInstall, importAlias, appRouter },
+    databaseProvider,
   } = await runCli();
 
-  const usePackages = buildPkgInstallerMap(packages);
+  const usePackages = buildPkgInstallerMap(packages, databaseProvider);
 
   // e.g. dir/@mono/app returns ["@mono/app", "dir/app"]
   const [scopedAppName, appDir] = parseNameAndPath(appName);
@@ -48,6 +51,7 @@ const main = async () => {
     projectName: appDir,
     scopedAppName,
     packages: usePackages,
+    databaseProvider,
     importAlias,
     noInstall,
     appRouter,
@@ -81,12 +85,6 @@ const main = async () => {
     await installDependencies({ projectDir });
   }
 
-  // Rename _eslintrc.json to .eslintrc.json - we use _eslintrc.json to avoid conflicts with the monorepos linter
-  fs.renameSync(
-    path.join(projectDir, "_eslintrc.cjs"),
-    path.join(projectDir, ".eslintrc.cjs")
-  );
-
   if (!noGit) {
     await initializeGit(projectDir);
   }
@@ -97,6 +95,7 @@ const main = async () => {
     appRouter,
     noInstall,
     projectDir,
+    databaseProvider,
   });
 
   process.exit(0);

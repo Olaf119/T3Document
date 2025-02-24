@@ -2,7 +2,7 @@ import { request } from "@octokit/request";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -114,7 +114,7 @@ export const extractVersionsAndFeatures = (slug: string) => {
   const regex =
     /(?<currentVersion>\d+\.\d+\.\d+).*(?<upgradeVersion>\d+\.\d+\.\d+)/;
   const match =
-    (slug.match(regex) as RegExpMatchArray & {
+    (regex.exec(slug) as RegExpMatchArray & {
       groups: VersionsRegex;
     }) || null;
 
